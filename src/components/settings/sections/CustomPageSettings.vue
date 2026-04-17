@@ -1,6 +1,7 @@
 <script setup>
 import { computed } from 'vue';
 import { parseCustomPageSource } from '../../../utils/custom-page-source.js';
+import Switch from '../../ui/Switch.vue';
 
 const props = defineProps({
   settings: {
@@ -124,58 +125,66 @@ const normalizeFullPageSource = () => {
           <p class="text-sm text-gray-500">通过自定义 HTML/CSS 打造独一无二的公开主页。</p>
         </div>
         <div class="flex items-center gap-2">
-          <span class="text-xs font-medium" :class="customPage.enabled ? 'text-green-500' : 'text-gray-400'">{{ customPage.enabled ? '已启用' : '已禁用' }}</span>
-          <label class="relative inline-flex items-center cursor-pointer">
-            <input type="checkbox" v-model="props.settings.customPage.enabled" class="sr-only peer">
-            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-300 dark:peer-focus:ring-primary-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary-600"></div>
-          </label>
+          <Switch v-model="props.settings.customPage.enabled" />
         </div>
       </div>
 
       <div v-if="customPage.enabled" class="space-y-6">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div class="flex flex-col gap-2 md:col-span-2">
-            <label class="text-sm font-medium text-gray-700 dark:text-gray-300">渲染方式</label>
-            <div class="flex items-center gap-2">
-              <span class="px-3 py-2 rounded-xl bg-primary-600 text-white border border-primary-600 text-sm font-medium">HTML / CSS 渲染</span>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="flex flex-col gap-2 md:col-span-2 p-4 bg-white/70 dark:bg-gray-900/50 border border-gray-200/70 dark:border-white/10 misub-radius-lg">
+            <p class="text-sm font-medium text-gray-900 dark:text-gray-200">渲染方式</p>
+            <div class="flex items-center gap-2 mt-1">
+              <span class="px-3 py-1.5 rounded-xl bg-primary-600 text-white border border-primary-600 text-xs font-medium">HTML / CSS 渲染</span>
             </div>
-            <p class="text-xs text-gray-500">通过标准 HTML 和 CSS 灵活定制您的页面，支持内置占位符。</p>
+            <p class="text-xs text-gray-500 mt-1">通过标准 HTML 和 CSS 灵活定制您的页面，支持内置占位符。</p>
           </div>
 
-          <div class="flex flex-col gap-2">
-            <label class="text-sm font-medium text-gray-700 dark:text-gray-300">使用默认布局基础</label>
-            <p class="text-xs text-gray-500">保留原本的背景色、响应式容器等基础结构，只改变内部内容。</p>
-            <div class="mt-1"><label class="relative inline-flex items-center cursor-pointer"><input type="checkbox" v-model="props.settings.customPage.useDefaultLayout" class="sr-only peer"><div class="w-11 h-6 bg-gray-200 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:bg-primary-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all"></div></label></div>
+          <div class="flex items-center justify-between p-4 bg-white/70 dark:bg-gray-900/50 border border-gray-200/70 dark:border-white/10 misub-radius-lg">
+            <div class="flex-1 mr-4">
+              <p class="text-sm font-medium text-gray-900 dark:text-gray-200">使用默认布局基础</p>
+              <p class="text-xs text-gray-500 mt-0.5">保留原本的背景色、响应式容器等基础结构，只改变内部内容。</p>
+            </div>
+            <Switch v-model="props.settings.customPage.useDefaultLayout" />
           </div>
 
-          <div class="flex flex-col gap-2">
-            <label class="text-sm font-medium text-gray-700 dark:text-gray-300">隐藏品牌标识</label>
-            <p class="text-xs text-gray-500">隐藏公开页中的 MiSub Logo、品牌文案和浏览器标题后缀，适合完全白标展示。</p>
-            <div class="mt-1"><label class="relative inline-flex items-center cursor-pointer"><input type="checkbox" v-model="props.settings.customPage.hideBranding" class="sr-only peer"><div class="w-11 h-6 bg-gray-200 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:bg-primary-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all"></div></label></div>
+          <div class="flex items-center justify-between p-4 bg-white/70 dark:bg-gray-900/50 border border-gray-200/70 dark:border-white/10 misub-radius-lg">
+            <div class="flex-1 mr-4">
+              <p class="text-sm font-medium text-gray-900 dark:text-gray-200">隐藏品牌标识</p>
+              <p class="text-xs text-gray-500 mt-0.5">隐藏公开页中的品牌文案和浏览器标题后缀。</p>
+            </div>
+            <Switch v-model="props.settings.customPage.hideBranding" />
           </div>
 
-          <div class="flex flex-col gap-2">
-            <label class="text-sm font-medium text-gray-700 dark:text-gray-300">隐藏页头</label>
-            <p class="text-xs text-gray-500">启用自定义公开页后，可隐藏站点顶部页头，适合个人主页或落地页。</p>
-            <div class="mt-1"><label class="relative inline-flex items-center cursor-pointer"><input type="checkbox" v-model="props.settings.customPage.hideHeader" class="sr-only peer"><div class="w-11 h-6 bg-gray-200 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:bg-primary-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all"></div></label></div>
+          <div class="flex items-center justify-between p-4 bg-white/70 dark:bg-gray-900/50 border border-gray-200/70 dark:border-white/10 misub-radius-lg">
+            <div class="flex-1 mr-4">
+              <p class="text-sm font-medium text-gray-900 dark:text-gray-200">隐藏页头</p>
+              <p class="text-xs text-gray-500 mt-0.5">适合个人主页或独立落地页。</p>
+            </div>
+            <Switch v-model="props.settings.customPage.hideHeader" />
           </div>
 
-          <div class="flex flex-col gap-2">
-            <label class="text-sm font-medium text-gray-700 dark:text-gray-300">隐藏页脚</label>
-            <p class="text-xs text-gray-500">启用后不再显示全局版权页脚，适合完全自定义的公开展示页面。</p>
-            <div class="mt-1"><label class="relative inline-flex items-center cursor-pointer"><input type="checkbox" v-model="props.settings.customPage.hideFooter" class="sr-only peer"><div class="w-11 h-6 bg-gray-200 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:bg-primary-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all"></div></label></div>
+          <div class="flex items-center justify-between p-4 bg-white/70 dark:bg-gray-900/50 border border-gray-200/70 dark:border-white/10 misub-radius-lg">
+            <div class="flex-1 mr-4">
+              <p class="text-sm font-medium text-gray-900 dark:text-gray-200">隐藏页脚</p>
+              <p class="text-xs text-gray-500 mt-0.5">不再显示全局版权页脚。</p>
+            </div>
+            <Switch v-model="props.settings.customPage.hideFooter" />
           </div>
 
-          <div class="flex flex-col gap-2">
-            <label class="text-sm font-medium text-gray-700 dark:text-gray-300">允许外链样式表</label>
-            <p class="text-xs text-gray-500">允许加载 HTML 源码里的 <code>&lt;link rel="stylesheet"&gt;</code>。</p>
-            <div class="mt-1"><label class="relative inline-flex items-center cursor-pointer"><input type="checkbox" v-model="props.settings.customPage.allowExternalStylesheets" class="sr-only peer"><div class="w-11 h-6 bg-gray-200 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:bg-primary-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all"></div></label></div>
+          <div class="flex items-center justify-between p-4 bg-white/70 dark:bg-gray-900/50 border border-gray-200/70 dark:border-white/10 misub-radius-lg">
+            <div class="flex-1 mr-4">
+              <p class="text-sm font-medium text-gray-900 dark:text-gray-200">允许外链样式表</p>
+              <p class="text-xs text-gray-500 mt-0.5">允许加载样式表 Link 标签。</p>
+            </div>
+            <Switch v-model="props.settings.customPage.allowExternalStylesheets" />
           </div>
 
-          <div class="flex flex-col gap-2">
-            <label class="text-sm font-medium text-gray-700 dark:text-gray-300">允许脚本执行</label>
-            <p class="text-xs text-gray-500">高风险功能。允许执行 HTML 源码中的外链脚本和内联脚本。</p>
-            <div class="mt-1"><label class="relative inline-flex items-center cursor-pointer"><input type="checkbox" v-model="props.settings.customPage.allowScripts" class="sr-only peer"><div class="w-11 h-6 bg-gray-200 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:bg-primary-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all"></div></label></div>
+          <div class="flex items-center justify-between p-4 bg-white/70 dark:bg-gray-900/50 border border-gray-200/70 dark:border-white/10 misub-radius-lg">
+            <div class="flex-1 mr-4">
+              <p class="text-sm font-medium text-gray-900 dark:text-gray-200">允许脚本执行</p>
+              <p class="text-xs text-gray-500 mt-0.5">高风险功能，允许执行内联和外链脚本。</p>
+            </div>
+            <Switch v-model="props.settings.customPage.allowScripts" />
           </div>
         </div>
 
