@@ -92,9 +92,27 @@ function opRename(nodes, params) {
         const rules = normalizeRules(regex.rules);
         if (rules.length > 0) {
             result = result.map(r => {
-                const newName = NodeUtils.applyRegexRename(r.name, rules);
+                const enriched = NodeUtils.ensureRegionInfo(r, true);
+                const vars = {
+                    name: r.name,
+                    protocol: r.protocol,
+                    region: enriched.region,
+                    regionZh: enriched.regionZh,
+                    emoji: enriched.emoji,
+                    server: r.server,
+                    port: r.port
+                };
+
+                // 核心增强：允许在正则替换中使用 {regionZh} 等变量
+                const processedRules = rules.map(rule => {
+                    if (typeof rule === 'object' && rule.replacement && rule.replacement.includes('{')) {
+                        return { ...rule, replacement: NodeUtils.renderTemplate(rule.replacement, vars, r) };
+                    }
+                    return rule;
+                });
+
+                const newName = NodeUtils.applyRegexRename(r.name, processedRules);
                 if (newName !== r.name) {
-                    // [核心修复] 即时同步 URL，防止改名在不同协议间丢失
                     return {
                         ...r,
                         name: newName,
@@ -235,11 +253,6 @@ async function opScript(nodes, params, context) {
         });
 
         // 执行脚本
-        // [终极调试] 强行修改所有节点名，测试算子是否运行
-        processedNodes.forEach(n => {
-            n.name = '测试节点';
-        });
-
         const result = await runner(processedNodes, context, scriptEnv.$utils);
         
         // 核心修复：彻底信任脚本返回的结果，并强制同步到 URL
@@ -263,11 +276,7 @@ async function opScript(nodes, params, context) {
         return nodes;
     } catch (e) {
         console.error('[Operator] Script execution failed:', e);
-        // [调试专用] 将错误直接显示在节点名上
-        return nodes.map(n => ({
-            ...n,
-            name: `[错误: ${e.message}] ` + n.name
-        }));
+        return nodes;
     }
 }
 
